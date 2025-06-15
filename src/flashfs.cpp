@@ -7,19 +7,19 @@
 
 bool initFlashFS() {
   if (!LittleFS.begin()) {
-    Serial.println("❌ LittleFS mount failed, formatting...");
+    Serial.println("LittleFS mount failed, formatting...");
     if (LittleFS.format()) {
-      Serial.println("✅ Format OK — mounting...");
+      Serial.println("Format OK — mounting...");
       if (LittleFS.begin()) {
-        Serial.println("✅ Mounted after format");
+        Serial.println("Mounted after format");
         return true;
       }
     }
-    Serial.println("❌ Format failed");
+    Serial.println("Format failed");
     return false;
   }
 
-  Serial.println("✅ LittleFS mounted");
+  Serial.println("LittleFS mounted");
   return true;
 }
 
@@ -43,7 +43,7 @@ bool fileExistsFS(const char* path) {
 String readFileFS(const char* path) {
   File file = LittleFS.open(path, "r");
   if (!file) {
-    Serial.printf("❌ Failed to open %s\n", path);
+    Serial.printf("Failed to open %s\n", path);
     return "";
   }
 
@@ -58,24 +58,24 @@ String readFileFS(const char* path) {
 bool writeFileFS(const char* path, const String& content) {
   File file = LittleFS.open(path, "w");
   if (!file) {
-    Serial.printf("❌ Failed to open %s for write\n", path);
+    Serial.printf("Failed to open %s for write\n", path);
     return false;
   }
   file.print(content);
   file.close();
-  Serial.printf("✅ File written: %s\n", path);
+  Serial.printf("File written: %s\n", path);
   return true;
 }
 
 bool appendToFileFS(const char* path, const String& content) {
   File file = LittleFS.open(path, "a");
   if (!file) {
-    Serial.printf("❌ Failed to open %s for append\n", path);
+    Serial.printf("Failed to open %s for append\n", path);
     return false;
   }
   file.print(content);
   file.close();
-  Serial.printf("✅ Content appended to: %s\n", path);
+  Serial.printf("Content appended to: %s\n", path);
   return true;
 }
 
@@ -83,11 +83,11 @@ void configureMACAddressFromJson(JsonObject doc) {
   if (!doc.containsKey("mac")) return;
   JsonArray mac = doc["mac"].as<JsonArray>();
   if (mac.size() != 6) {
-    Serial.println("⚠️ MAC array must have 6 bytes");
+    Serial.println("MAC array must have 6 bytes");
     return;
   }
   for (int i = 0; i < 6; i++) MAC_ADDR[i] = mac[i];
-  Serial.print("🧭 MAC address set to: ");
+  Serial.print("MAC address set to: ");
   for (int i = 0; i < 6; i++) {
     Serial.printf("%02X", MAC_ADDR[i]);
     if (i < 5) Serial.print(":");
@@ -104,66 +104,66 @@ void configureLoRaFromJson(JsonObject doc) {
   if (lora.containsKey("join")) {
     String mode = lora["join"].as<String>();
     JOIN_MODE_ABP = (mode == "abp");
-    Serial.printf("🔄 Join mode: %s\n", JOIN_MODE_ABP ? "ABP" : "OTAA");
+    Serial.printf("Join mode: %s\n", JOIN_MODE_ABP ? "ABP" : "OTAA");
   }
 
   // OTAA credentials
   if (lora.containsKey("deveui")) {
     String s = lora["deveui"].as<String>();
-    if (!parseHexString(s, DEVEUI, 8)) Serial.println("⚠️ Invalid DEVEUI");
+    if (!parseHexString(s, DEVEUI, 8)) Serial.println("Invalid DEVEUI");
   }
   if (lora.containsKey("appeui")) {
     String s = lora["appeui"].as<String>();
-    if (!parseHexString(s, APPEUI, 8)) Serial.println("⚠️ Invalid APPEUI");
+    if (!parseHexString(s, APPEUI, 8)) Serial.println("Invalid APPEUI");
   }
   if (lora.containsKey("appkey")) {
     String s = lora["appkey"].as<String>();
-    if (!parseHexString(s, APPKEY, 16)) Serial.println("⚠️ Invalid APPKEY");
+    if (!parseHexString(s, APPKEY, 16)) Serial.println("Invalid APPKEY");
   }
 
   // ABP credentials
   if (lora.containsKey("nwkskey")) {
     String s = lora["nwkskey"].as<String>();
-    if (!parseHexString(s, NWKSKEY, 16)) Serial.println("⚠️ Invalid NWKSKEY");
+    if (!parseHexString(s, NWKSKEY, 16)) Serial.println("Invalid NWKSKEY");
   }
   if (lora.containsKey("appskey")) {
     String s = lora["appskey"].as<String>();
-    if (!parseHexString(s, APPSKEY, 16)) Serial.println("⚠️ Invalid APPSKEY");
+    if (!parseHexString(s, APPSKEY, 16)) Serial.println("Invalid APPSKEY");
   }
   if (lora.containsKey("devaddr")) {
     String s = lora["devaddr"].as<String>();
     if (s.length() == 8) {
       DEVADDR = strtoul(s.c_str(), nullptr, 16);
     } else {
-      Serial.println("⚠️ Invalid DEVADDR length");
+      Serial.println("Invalid DEVADDR length");
     }
   }
 
   if (lora.containsKey("interval")) {
     LORA_UPLINK_INTERVAL = lora["interval"].as<unsigned long>();
-    Serial.printf("⏱️ LoRa uplink interval set to %lu ms\n", LORA_UPLINK_INTERVAL);
+    Serial.printf("LoRa uplink interval set to %lu ms\n", LORA_UPLINK_INTERVAL);
   }
   if (lora.containsKey("subband")) {
     LORA_SUBBAND = lora["subband"].as<uint8_t>();
-    Serial.printf("📶 LoRa subband set to %u\n", LORA_SUBBAND);
+    Serial.printf("LoRa subband set to %u\n", LORA_SUBBAND);
   }
   if (lora.containsKey("adr")) {
     LORA_ADR = lora["adr"].as<bool>();
-    Serial.printf("⚙️ LoRa ADR %s\n", LORA_ADR ? "enabled" : "disabled");
+    Serial.printf("LoRa ADR %s\n", LORA_ADR ? "enabled" : "disabled");
   }  
   if (lora.containsKey("sf")) {
     LORA_SF = lora["sf"].as<uint8_t>();
-    Serial.printf("📡 LoRa spreading factor set to SF%d\n", LORA_SF);
+    Serial.printf("LoRa spreading factor set to SF%d\n", LORA_SF);
   }
 
-  Serial.println("📡 LoRa config loaded from lora.json");
+  Serial.println("LoRa config loaded from lora.json");
 }
 
 void configureEthernetFromJson(JsonObject doc) {
     // Optional: allow top-level "enableEthernet" flag
     if (doc.containsKey("enableEthernet")) {
       enableEthernet = doc["enableEthernet"].as<bool>();
-      Serial.printf("🔧 Ethernet %s via config\n", enableEthernet ? "enabled" : "disabled");
+      Serial.printf("Ethernet %s via config\n", enableEthernet ? "enabled" : "disabled");
     }
   
     if (!doc.containsKey("ethernet")) return;
@@ -172,13 +172,13 @@ void configureEthernetFromJson(JsonObject doc) {
   
     if (!(eth["ip"].is<JsonArray>() && eth["gateway"].is<JsonArray>() && 
           eth["subnet"].is<JsonArray>() && eth["dns"].is<JsonArray>())) {
-      Serial.println("⚠️ Ethernet IP configuration arrays are malformed");
+      Serial.println("Ethernet IP configuration arrays are malformed");
       return;
     }
   
     if (!(eth["ip"].size() == 4 && eth["gateway"].size() == 4 && 
           eth["subnet"].size() == 4 && eth["dns"].size() == 4)) {
-      Serial.println("⚠️ IP/gateway/subnet/dns must each be 4 bytes");
+      Serial.println("IP/gateway/subnet/dns must each be 4 bytes");
       return;
     }
   
@@ -209,7 +209,7 @@ void loadModbusConfigFromFlash(const char* configPath) {
       }
     })json";
     writeFileFS(netConfigPath, defaultEth);
-    Serial.println("✍️ Default ethernet.json created (Flash)");
+    Serial.println("Default ethernet.json created (Flash)");
   }
 
   // --- Write default lora.json if missing ---
@@ -230,7 +230,7 @@ void loadModbusConfigFromFlash(const char* configPath) {
         }
       })json";
     writeFileFS(loraConfigPath, defaultLora);
-    Serial.println("✍️ Default lora.json created (Flash)");
+    Serial.println("Default lora.json created (Flash)");
   }
 
   // --- Load and apply ethernet config ---
@@ -252,11 +252,11 @@ void loadModbusConfigFromFlash(const char* configPath) {
     if (!err) {
       configureLoRaFromJson(loraDoc.as<JsonObject>());
     } else {
-      Serial.println("⚠️ Failed to parse lora.json");
+      Serial.println("Failed to parse lora.json");
       Serial.println(err.c_str());
     }
   } else {
-    Serial.println("⚠️ No lora.json config found");
+    Serial.println("No lora.json config found");
   }
 
   // --- Write default modbus.json if missing ---
@@ -278,7 +278,7 @@ void loadModbusConfigFromFlash(const char* configPath) {
       ]
     })json";
     writeFileFS(configPath, defaultModbus);
-    Serial.println("✍️ Default modbus.json created (Flash)");
+    Serial.println("Default modbus.json created (Flash)");
   }
 
   // --- Load Modbus requests ---
@@ -287,13 +287,13 @@ void loadModbusConfigFromFlash(const char* configPath) {
     StaticJsonDocument<2048> doc;
     DeserializationError err = deserializeJson(doc, jsonStr);
     if (err) {
-      Serial.println("❌ JSON parse error");
+      Serial.println("JSON parse error");
       return;
     }
 
     if (doc.containsKey("interval")) {
       MODBUS_SCAN_INTERVAL = doc["interval"].as<unsigned long>();
-      Serial.printf("⏱️ Modbus scan interval set to %lu ms\n", MODBUS_SCAN_INTERVAL);
+      Serial.printf("Modbus scan interval set to %lu ms\n", MODBUS_SCAN_INTERVAL);
     }
 
     JsonArray arr = doc["requests"].as<JsonArray>();
@@ -303,14 +303,14 @@ void loadModbusConfigFromFlash(const char* configPath) {
       if (!obj.containsKey("ip") || obj["ip"].size() != 4 ||
           !obj.containsKey("unitID") || !obj.containsKey("start") ||
           !obj.containsKey("count") || !obj.containsKey("function")) {
-        Serial.println("⚠️ Skipping malformed request");
+        Serial.println("Skipping malformed request");
         continue;
       }
 
       int count = obj["count"];
       int function = obj["function"];
       if (count <= 0 || count > 125 || !(function >= 1 && function <= 4)) {
-        Serial.println("⚠️ Invalid Modbus parameters");
+        Serial.println("Invalid Modbus parameters");
         continue;
       }
 
@@ -338,13 +338,13 @@ void loadModbusConfigFromFlash(const char* configPath) {
           a.threshold = alarm["threshold"];
           a.active = false;
         }
-        Serial.printf(" 🔔 %d alarms configured for request %d\n", req.alarmCount, requestCount - 1);
+        Serial.printf("%d alarms configured for request %d\n", req.alarmCount, requestCount - 1);
       }
     }
 
-    Serial.printf("✅ Loaded %d Modbus requests from %s\n", requestCount, configPath);
+    Serial.printf("Loaded %d Modbus requests from %s\n", requestCount, configPath);
   } else {
-    Serial.printf("⚠️ No Modbus config file found at %s\n", configPath);
+    Serial.printf("No Modbus config file found at %s\n", configPath);
   }
 }
 
@@ -356,14 +356,14 @@ void loadInputsConfig(const char* path) {
         { "pin": 15, "type": "counter", "alarm": { "active": false } }
       ]
     })json");
-    Serial.println("✍️ Default inputs.json created");
+    Serial.println("Default inputs.json created");
   }
 
   String content = readFileFS(path);
   StaticJsonDocument<1024> doc;
   DeserializationError err = deserializeJson(doc, content);
   if (err) {
-    Serial.println("❌ Failed to parse inputs.json");
+    Serial.println("Failed to parse inputs.json");
     return;
   }
 
@@ -391,7 +391,7 @@ void loadFrameCounter() {
   if (file) {
     LMIC.seqnoUp = file.parseInt();
     file.close();
-    Serial.printf("🔁 Restored frame counter: %lu\n", LMIC.seqnoUp);
+    Serial.printf("Restored frame counter: %lu\n", LMIC.seqnoUp);
   }
 }
 

@@ -75,7 +75,7 @@ void executeCommand(const String& input) {
     }
 
     file.close();
-    Serial.printf("✅ File saved to %s\n", path.c_str());
+    Serial.printf("File saved to %s\n", path.c_str());
     return;
   }
 
@@ -93,7 +93,7 @@ void executeCommand(const String& input) {
   
 
   if (cmd == "help") {
-    Serial.println("📖 Commands:");
+    Serial.println("Commands:");
     Serial.println("  list                - List all files");
     Serial.println("  view <file>         - View contents of a file");
     Serial.println("  write <file>        - Create/overwrite a file (end with EOF)");
@@ -109,18 +109,18 @@ void executeCommand(const String& input) {
   }
 
   if (cmd == "resetfs") {
-    Serial.println("⚠️ Formatting filesystem...");
+    Serial.println("Formatting filesystem...");
     if (LittleFS.format() && LittleFS.begin()) {
-      Serial.println("✅ Reformatted. Creating default config...");
+      Serial.println("Reformatted. Creating default config...");
       writeDefaultConfigs();  // You should define this as in previous messages
     } else {
-      Serial.println("❌ Failed to format LittleFS");
+      Serial.println("Failed to format LittleFS");
     }
     return;
   }
 
   if (cmd == "reboot") {
-    Serial.println("🔄 Rebooting...");
+    Serial.println("Rebooting...");
     delay(1000);
     ESP.restart();
     return;
@@ -130,18 +130,18 @@ void executeCommand(const String& input) {
   Serial.println("🔁 Reloading configuration...");
   loadModbusConfigFromFlash();   // Reapplies Modbus, Ethernet, LoRa
   loadInputsConfig();   // Reapplies digital/counter input config
-  Serial.println("✅ Configuration reloaded.");
+  Serial.println("Configuration reloaded.");
   return;
 }
 
-  Serial.println("❓ Unknown command. Type 'help' for options.");
+  Serial.println("Unknown command. Type 'help' for options.");
 }
 
 
 void editFile(const char* path) {
     File file = LittleFS.open(path, "r");
     if (!file) {
-      Serial.println("❌ File not found.");
+      Serial.println("File not found.");
       return;
     }
   
@@ -152,7 +152,7 @@ void editFile(const char* path) {
     }
     file.close();
   
-    Serial.println("📝 Editing file:");
+    Serial.println("Editing file:");
     for (size_t i = 0; i < lines.size(); i++) {
       Serial.printf(" %2d: %s\n", i, lines[i].c_str());
     }
@@ -168,7 +168,7 @@ void editFile(const char* path) {
       }
   
       if (input == "q") {
-        Serial.println("👋 Exiting editor (no changes saved).");
+        Serial.println("Exiting editor (no changes saved).");
         return;
       }
   
@@ -183,7 +183,7 @@ void editFile(const char* path) {
         DeserializationError err = deserializeJson(doc, combined);
         File out = LittleFS.open(path, "w");
         if (!out) {
-          Serial.println("❌ Failed to open file for writing");
+          Serial.println("Failed to open file for writing");
           return;
         }
   
@@ -194,7 +194,7 @@ void editFile(const char* path) {
           for (auto& line : lines) {
             out.println(line);
           }
-          Serial.println("⚠️ File saved (raw lines, JSON invalid).");
+          Serial.println("File saved (raw lines, JSON invalid).");
         }
   
         out.close();
@@ -204,7 +204,7 @@ void editFile(const char* path) {
       if (input == "a") {
         String newline = getUserLine("New line: ");
         lines.push_back(newline);
-        Serial.println("➕ Line added.");
+        Serial.println("Line added.");
         continue;
       }
   
@@ -214,7 +214,7 @@ void editFile(const char* path) {
           lines.erase(lines.begin() + index);
           Serial.println("🗑️ Line deleted.");
         } else {
-          Serial.println("⚠️ Invalid line number.");
+          Serial.println("Invalid line number.");
         }
         continue;
       }
@@ -225,9 +225,9 @@ void editFile(const char* path) {
           Serial.printf("Current [%d]: %s\n", index, lines[index].c_str());
           String newLine = getUserLine("New: ");
           lines[index] = newLine;
-          Serial.println("✅ Line updated");
+          Serial.println("Line updated");
         } else {
-          Serial.println("⚠️ Invalid line number.");
+          Serial.println("Invalid line number.");
         }
         continue;
       }
@@ -238,12 +238,12 @@ void editFile(const char* path) {
       Serial.printf("Insert after [%d]:\n... ", index);
       String newLine = getUserLine();
       lines.insert(lines.begin() + index + 1, newLine);
-      Serial.println("✅ Line inserted");
+      Serial.println("Line inserted");
     }
   }
 
   
-      Serial.println("❓ Commands: e <n>, d <n>, a, i <n>, s (save), q (quit)");
+      Serial.println("Commands: e <n>, d <n>, a, i <n>, s (save), q (quit)");
     }
   }
   
@@ -336,7 +336,7 @@ void handleSerialCommand() {
       if (file) {
         file.print(eth);
         file.close();
-        Serial.println("✅ Created /ethernet.json");
+        Serial.println("Created /ethernet.json");
       }
     }
   
@@ -357,7 +357,7 @@ void handleSerialCommand() {
       if (file) {
         file.print(lora);
         file.close();
-        Serial.println("✅ Created /lora.json");
+        Serial.println("Created /lora.json");
       }
     }
   
@@ -383,7 +383,7 @@ void handleSerialCommand() {
       if (file) {
         file.print(modbus);
         file.close();
-        Serial.println("✅ Created /modbus.json");
+        Serial.println("Created /modbus.json");
       }
     }
   }

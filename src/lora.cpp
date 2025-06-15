@@ -34,10 +34,10 @@ void initLoRa() {
     LMIC_setSession(0x13, DEVADDR, NWKSKEY, APPSKEY);
     LMIC_setLinkCheckMode(0);  // disable MAC link check in ABP
     joined = true;
-    Serial.println("🔐 ABP session initialized");
+    Serial.println("ABP session initialized");
   } else {
     LMIC_startJoining();
-    Serial.println("🔄 OTAA join started");
+    Serial.println("OTAA join started");
   }
 }
 
@@ -150,7 +150,7 @@ void sendLoRaUplink() {
         case 11: LMIC_setDrTxpow(DR_SF11, 14); break;
         case 12: LMIC_setDrTxpow(DR_SF12, 14); break;
         default:
-          Serial.println("⚠️ Invalid SF in config — defaulting to SF7");
+          Serial.println("Invalid SF in config — defaulting to SF7");
           LMIC_setDrTxpow(DR_SF7, 14);
       }
     }
@@ -164,8 +164,8 @@ void sendLoRaUplink() {
         AlarmCondition& alarm = req.alarms[a];
         if (alarm.pending) {
           sendAlarmUplink(req, alarm, req.result[alarm.index]);
-          alarm.pending = false;  // ✅ clear it after send
-          return;  // ✅ only send one per loop
+          alarm.pending = false;  // clear it after send
+          return;  // only send one per loop
         }
       }
     }
@@ -188,12 +188,12 @@ void sendLoRaUplink() {
     payload[i++] = lowByte(value);
   
     txComplete = false;
-    LMIC_setTxData2(2, payload, i, 1);  // ⚠️ fPort = 2 for alarms
+    LMIC_setTxData2(2, payload, i, 1);  //  fPort = 2 for alarms
   
     while (!txComplete) os_runloop_once();
     LMIC_clrTxData();
   
-    Serial.println("📡 Alarm uplink sent");
+    Serial.println("Alarm uplink sent");
   }
 
   void sendAlarmUplink(uint8_t inputIndex, uint8_t expected, uint8_t actual) {
@@ -212,7 +212,7 @@ void sendLoRaUplink() {
     while (!txComplete) os_runloop_once();
     LMIC_clrTxData();
 
-    Serial.printf("📡 Digital Input Alarm %d: expected %d, got %d\n", inputIndex, expected, actual);
+    Serial.printf("Digital Input Alarm %d: expected %d, got %d\n", inputIndex, expected, actual);
 }
 
   
@@ -224,19 +224,19 @@ void sendLoRaUplink() {
 void onEvent(ev_t ev) {
   switch (ev) {
     case EV_TXSTART:
-      Serial.printf("📡 TX Start - freq: %lu Hz, sf: SF%d\n", LMIC.freq, LMIC.datarate);
+      Serial.printf("TX Start - freq: %lu Hz, sf: SF%d\n", LMIC.freq, LMIC.datarate);
       break;
     case EV_JOINING:  Serial.println("EV_JOINING"); break;
-    case EV_JOINED:   Serial.println("✅ EV_JOINED"); joined = true; break;
+    case EV_JOINED:   Serial.println("EV_JOINED"); joined = true; break;
     case EV_TXCOMPLETE:
       //resetLoRaChip(); 
       txComplete = true;
       Serial.println("EV_TXCOMPLETE");
       saveFrameCounter();
       if (LMIC.txrxFlags & TXRX_ACK) {
-        Serial.println("✅ Server ACK received");
+        Serial.println("Server ACK received");
       } else {
-        Serial.println("❌ No ACK received");
+        Serial.println("No ACK received");
       }
       break;
     default: Serial.println((unsigned)ev); break;
@@ -272,7 +272,7 @@ void sendLoRaPayloadChunk(uint8_t* payload, uint8_t len) {
   }
 
   if (!txComplete) {
-    Serial.println("⚠️ TX timeout — no confirmation from LMIC");
+    Serial.println("TX timeout — no confirmation from LMIC");
   }
 
   LMIC_clrTxData();

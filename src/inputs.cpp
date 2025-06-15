@@ -17,7 +17,7 @@ void handleDigitalInputs() {
 
     if (inputConfigs[i].alarmActive && inputConfigs[i].type == DIGITAL) {
       if (state == inputConfigs[i].alarmExpected) {
-        Serial.printf("🚨 Alarm: input %d = %d\n", inputConfigs[i].pin, state);
+        Serial.printf("Alarm: input %d = %d\n", inputConfigs[i].pin, state);
         // mark for alarm uplink
       }
     }
